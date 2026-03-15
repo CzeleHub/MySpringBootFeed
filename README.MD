@@ -9,3 +9,5 @@
 gradle build
 ### build&run
 gradle bootRun
+&
+go to http://localhost:9000/

@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.example.Article;
+import com.example.article.Article;
+import com.example.article.ArticleBuilder;
 
 public class PhoronixSiteParser {
     public List<Article> parseArticles(Elements articles) {
@@ -23,7 +24,8 @@ public class PhoronixSiteParser {
             Element descriptionElement = article.selectFirst("p");
             Element aArticleElement = article.selectFirst("a");
 
-            if (Stream.of(commentElement, headerElement, imageElement, descriptionElement, aArticleElement).anyMatch(Objects::isNull)) {
+            if (Stream.of(commentElement, headerElement, imageElement, descriptionElement, aArticleElement)
+                    .anyMatch(Objects::isNull)) {
                 continue;
             }
 
@@ -33,7 +35,13 @@ public class PhoronixSiteParser {
             String description = descriptionElement.text();
             String link = "https://www.phoronix.com/" + aArticleElement.attr("href");
 
-            feed.add(new Article(null, title, link, description, image, comments));
+            feed.add(new ArticleBuilder()
+                    .setTitle(title)
+                    .setImage(image)
+                    .setDescription(description)
+                    .setLink(link)
+                    .setComments(comments)
+                    .Build());
         }
         return feed;
     }

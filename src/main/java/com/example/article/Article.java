@@ -1,4 +1,4 @@
-package com.example;
+package com.example.article;
 
 import java.time.ZonedDateTime;
 

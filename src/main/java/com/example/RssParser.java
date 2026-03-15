@@ -12,6 +12,9 @@ import java.util.stream.Stream;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.example.article.Article;
+import com.example.article.ArticleBuilder;
+
 class RssParser {
     public List<Article> parseItems(Elements items) {
         List<Article> feed = new ArrayList<Article>();
@@ -37,7 +40,12 @@ class RssParser {
             String description = descriptionElement.text();
             String link = linkElement.text();
 
-            feed.add(new Article(publicationDate, title, link, description, null, null));
+            feed.add(new ArticleBuilder()
+                    .setPublicationDate(publicationDate)
+                    .setTitle(title)
+                    .setDescription(description)
+                    .setLink(link)
+                    .Build());
         }
 
         return feed;

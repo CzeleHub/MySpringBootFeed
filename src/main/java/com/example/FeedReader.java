@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.example.article.Article;
 import com.example.phoronix.PhoronixSiteParser;
 
 public class FeedReader {
@@ -38,7 +39,7 @@ public class FeedReader {
             return new ArrayList<Article>();
         }
         
-        // todo enums
+        // TODO enums
         Elements articles = doc.select("article");
 
         List<Article> feed = new PhoronixSiteParser().parseArticles(articles);

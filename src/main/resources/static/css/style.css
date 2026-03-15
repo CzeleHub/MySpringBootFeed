@@ -4,6 +4,7 @@
     --color-border: color-mix(in srgb, var(--color-background) 90%, white 25%);
     --color-text: azure;
     --color-text-unfocus: lightgray;
+    font-family: 'Albert Sans';
 }
 
 html,
@@ -132,10 +133,6 @@ button:active {
     min-width: 70ch; */
     padding: 20px;
     max-height: fit-content;
-}
-
-.article * {
-    font-family: 'Albert Sans';
 }
 
 .article img {

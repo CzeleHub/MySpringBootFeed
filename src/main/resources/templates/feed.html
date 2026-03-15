@@ -1,0 +1,24 @@
+<!-- <div th:each="article: ${feed}" th:replace="article :: ${article}">
+</div> -->
+<!-- <div > -->
+<a th:each="article: ${feed}" class="article" th:if="${!#strings.isEmpty(article.link)}" th:href="${article.link}"
+    target="_blank" rel="noopener noreferrer" th:data-com="${article.comments}">
+    <div>
+        <!-- private ZonedDateTime publicationDate;
+        private String title;
+        private String link;
+        private String description;
+        private String image;
+        private Integer comments; -->
+        <span th:text="${article.title}" class="title">Title</span>
+        <img th:if="${!#strings.isEmpty(article.image)}" th:src="${article.image}" alt="">
+        <p class="description" th:text="${article.description}">Description</p>
+        <div th:if="${!#strings.isEmpty(article.comments)}">
+            <span>Comments: </span><span th:text="${article.comments}">Comments</span>
+        </div>
+        <div th:if="${!#strings.isEmpty(article.publicationDate)}">
+            <span>Published </span><span th:text="${article.publicationDate}">PublicationDate</span>
+        </div>
+    </div>
+</a>
+<!-- </div> -->

@@ -2,26 +2,46 @@ package com.example;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.example.phoronix.PhoronixSiteParser;
+
 public class FeedReader {
-    public List<PhoronixArticle> readFeed() {
+    public List<Article> readRssFeed(String url) {
+        Document doc;
+        try {
+            doc = (Document) Jsoup.connect(url).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<Article>();
+        }
+        
+        Elements items = doc.select("item");
+
+        List<Article> feed = new RssParser().parseItems(items);
+        
+        return feed;
+    }
+
+    public List<Article> readSiteFeed(String url) {
         Document doc;
         try {
             // doc = Jsoup.parse(new File("src/main/resources/test/example_feed.html"));
-            doc = (Document) Jsoup.connect("https://www.phoronix.com/").get();
+            doc = (Document) Jsoup.connect(url).get();
         } catch (IOException e) {
             e.printStackTrace();
-            doc = Jsoup.parse("");
+            return new ArrayList<Article>();
         }
         
+        // todo enums
         Elements articles = doc.select("article");
 
-        List<PhoronixArticle> feed = new PhoronixFeedParser().parseArticles(articles);
+        List<Article> feed = new PhoronixSiteParser().parseArticles(articles);
         
         return feed;
     }

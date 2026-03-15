@@ -1,11 +1,14 @@
 package com.example;
 
+import lombok.Getter;
+
+@Getter
 public class PhoronixArticle {
-    String title;
-    int comments;
-    String img;
-    String details;
-    String href;
+    private String title;
+    private int comments;
+    private String img;
+    private String details;
+    private String href;
 
     PhoronixArticle(String title, int comments, String img, String details, String href) {
         this.title = title;
@@ -13,25 +16,5 @@ public class PhoronixArticle {
         this.img = img;
         this.details = details;
         this.href = "https://www.phoronix.com" + href;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public int getComments() {
-        return this.comments;
-    }
-
-    public String getDetails() {
-        return this.details;
-    }
-
-    public String getImg() {
-        return this.img;
-    }
-
-    public String getHref() {
-        return this.href;
     }
 }

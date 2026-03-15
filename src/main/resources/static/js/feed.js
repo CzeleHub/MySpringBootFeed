@@ -1,8 +1,17 @@
 
 async function getFeed() {
-    let response = await fetch('/feed');
-    let html = await response.text();
-    document.getElementById('feed-container').innerHTML = html;
+    let response;
+    let html;
+
+    response = await fetch('/feed');
+    html = await response.text();
+
+    if (!response.ok) {
+        document.documentElement.innerHTML = html;
+    } else {
+        document.getElementById('feed-container').innerHTML = html;
+    }
+    
 }
 
 function sortFeed() {

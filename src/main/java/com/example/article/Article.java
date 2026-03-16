@@ -1,6 +1,8 @@
 package com.example.article;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,4 +16,12 @@ public class Article {
     private String description;
     private String image;
     private Integer comments;
+
+    public String getPublicationDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                "EEE, dd MMM yyyy",
+                Locale.ENGLISH);
+
+        return publicationDate.format(formatter);
+    }
 }

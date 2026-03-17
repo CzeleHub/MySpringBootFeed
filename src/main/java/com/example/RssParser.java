@@ -9,7 +9,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import com.example.article.Article;
@@ -37,7 +39,7 @@ class RssParser {
 
             ZonedDateTime publicationDate = ZonedDateTime.parse(publicationDateElement.text(), formatter);
             String title = titleElement.text();
-            String description = descriptionElement.text();
+            String description = Jsoup.parse(Parser.unescapeEntities(descriptionElement.text(), false)).text();
             String link = linkElement.text();
 
             feed.add(new ArticleBuilder()

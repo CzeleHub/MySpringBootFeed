@@ -18,6 +18,7 @@ public class Article {
     private Integer comments;
 
     public String getPublicationDate() {
+        if (publicationDate == null) { return null; }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
                 "EEE, dd MMM yyyy",
                 Locale.ENGLISH);

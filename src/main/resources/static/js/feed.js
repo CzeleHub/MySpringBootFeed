@@ -1,8 +1,8 @@
 
-async function getPhoronixFeed() {
+async function getSiteFeed(triggerElement) {
     let response;
     let html;
-    let url = "https://www.phoronix.com/";
+    let url = triggerElement.dataset.url;
 
     response = await fetch(`/site?url=${encodeURIComponent(url)}`);
     
@@ -16,10 +16,10 @@ async function getPhoronixFeed() {
     
 }
 
-async function getRssFeed() {
+async function getRssFeed(triggerElement) {
     let response;
     let html;
-    let url = "https://www.gamingonlinux.com/article_rss.php";
+    let url = triggerElement.dataset.url;
 
     response = await fetch(`/rss?url=${encodeURIComponent(url)}`);
     

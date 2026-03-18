@@ -25,4 +25,8 @@ public class Article {
 
         return publicationDate.format(formatter);
     }
+
+    public ZonedDateTime getZonedDateTimePublicationDate() {
+        return publicationDate;
+    }
 }

@@ -4,9 +4,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import org.jsoup.Jsoup;
@@ -19,37 +22,55 @@ import com.example.article.ArticleBuilder;
 
 class RssParser {
     public List<Article> parseItems(Elements items) {
-        List<Article> feed = new ArrayList<Article>();
+        List<Article> feed = Collections.synchronizedList(new ArrayList<Article>());
 
-        for (Element item : items) {
-            Element publicationDateElement = item.selectFirst("pubDate");
-            Element titleElement = item.selectFirst("title");
-            Element linkElement = item.selectFirst("link");
-            Element descriptionElement = item.selectFirst("description");
-            
-            if (Stream.of(publicationDateElement, titleElement, linkElement, descriptionElement).anyMatch(Objects::isNull)) {
-                System.out.println("empty");
-                continue;
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            for (Element item : items) {
+                executor.submit(() -> {
+                    try {
+                        feed.add(parseItem(item));
+                    } finally {
+                        return null;
+                    }
+                });
             }
-
-            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                    .parseCaseInsensitive()
-                    .appendPattern("EEE, dd MMM yyyy HH:mm:ss Z")
-                    .toFormatter(Locale.ENGLISH);
-
-            ZonedDateTime publicationDate = ZonedDateTime.parse(publicationDateElement.text(), formatter);
-            String title = titleElement.text();
-            String description = Jsoup.parse(Parser.unescapeEntities(descriptionElement.text(), false)).text();
-            String link = linkElement.text();
-
-            feed.add(new ArticleBuilder()
-                    .setPublicationDate(publicationDate)
-                    .setTitle(title)
-                    .setDescription(description)
-                    .setLink(link)
-                    .Build());
         }
+
+        feed.sort((a1, a2) -> {
+            return a2.getZonedDateTimePublicationDate().compareTo(a1.getZonedDateTimePublicationDate());
+        });
 
         return feed;
     }
+
+    private Article parseItem(Element item) throws Exception {
+        Element publicationDateElement = item.selectFirst("pubDate");
+        Element titleElement = item.selectFirst("title");
+        Element linkElement = item.selectFirst("link");
+        Element descriptionElement = item.selectFirst("description");
+
+        if (Stream.of(publicationDateElement, titleElement, linkElement, descriptionElement)
+                .anyMatch(Objects::isNull)) {
+            throw new Exception();
+        }
+
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("EEE, dd MMM yyyy HH:mm:ss Z")
+                .toFormatter(Locale.ENGLISH);
+
+        ZonedDateTime publicationDate = ZonedDateTime.parse(publicationDateElement.text(), formatter);
+
+        String title = titleElement.text();
+        String description = Jsoup.parse(Parser.unescapeEntities(descriptionElement.text(), false)).text();
+        String link = linkElement.text();
+
+        return new ArticleBuilder()
+                .setPublicationDate(publicationDate)
+                .setTitle(title)
+                .setDescription(description)
+                .setLink(link)
+                .Build();
+    }
+
 }

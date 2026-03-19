@@ -5,10 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
@@ -27,11 +27,8 @@ class RssParser {
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             for (Element item : items) {
                 executor.submit(() -> {
-                    try {
-                        feed.add(parseItem(item));
-                    } finally {
-                        return null;
-                    }
+                    parseItem(item).ifPresent((article) -> feed.add(article));
+                    return null;
                 });
             }
         }
@@ -43,7 +40,7 @@ class RssParser {
         return feed;
     }
 
-    private Article parseItem(Element item) throws Exception {
+    private Optional<Article> parseItem(Element item) {
         Element publicationDateElement = item.selectFirst("pubDate");
         Element titleElement = item.selectFirst("title");
         Element linkElement = item.selectFirst("link");
@@ -51,7 +48,7 @@ class RssParser {
 
         if (Stream.of(publicationDateElement, titleElement, linkElement, descriptionElement)
                 .anyMatch(Objects::isNull)) {
-            throw new Exception();
+            return Optional.empty();
         }
 
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
@@ -65,12 +62,12 @@ class RssParser {
         String description = Jsoup.parse(Parser.unescapeEntities(descriptionElement.text(), false)).text();
         String link = linkElement.text();
 
-        return new ArticleBuilder()
+        return Optional.of(new ArticleBuilder()
                 .setPublicationDate(publicationDate)
                 .setTitle(title)
                 .setDescription(description)
                 .setLink(link)
-                .Build();
+                .Build());
     }
 
 }
